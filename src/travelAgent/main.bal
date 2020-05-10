@@ -3,12 +3,18 @@ import ballerina/log;
 
 // Client endpoint to communicate with Airline reservation service
 http:Client airlineReservationEP = new("http://192.168.1.3:7278");
+// Experiment IPs
+// http:Client airlineReservationEP = new("http://192.168.32.8:7278");
 
 // // Client endpoint to communicate with Hotel reservation service
 http:Client hotelReservationEP = new("http://192.168.1.4:6268");
+// Experiment IPs
+// http:Client hotelReservationEP = new("http://192.168.32.8:6268");
 
 // // Client endpoint to communicate with Car rental service
 http:Client carRentalEP = new("http://192.168.1.5:5258");
+// Experiment IPs
+// http:Client carRentalEP = new("http://192.168.32.8:5258");
 
 // Travel agency service to arrange a complete tour for a user
 @http:ServiceConfig {basePath:"/travel"}

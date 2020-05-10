@@ -7,6 +7,8 @@ string dbUser = "root";
 string dbPassword = "test@123";
 
 mysql:Client mysqlClient = check new (host= "192.168.1.8", port= 3306, user = dbUser, password = dbPassword, database = "car");
+// Experiment IPs
+// mysql:Client mysqlClient = check new (host= "192.168.32.4", port= 3302, user = dbUser, password = dbPassword, database = "car");
 
 function readOperation(mysql:Client mysqlClient, map<json> input) returns int{
     stream<record{}, error> resultStream =
