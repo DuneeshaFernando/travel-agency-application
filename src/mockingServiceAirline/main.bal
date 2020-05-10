@@ -66,7 +66,7 @@ service reserveItems on new http:Listener(7278) {
         json | error airlinePreference = inReqPayload.Preference;
         
         // If payload parsing fails, send a "Bad Request" message as the response
-        if (outReqPayload.FirstName is () || outReqPayload.FirstName is () || airlinePreference is error) {
+        if (outReqPayload.FirstName is () || outReqPayload.LastName is () || airlinePreference is error) {
             outResponse.statusCode = 400;
             outResponse.setJsonPayload({"Message": "Bad Request - Invalid Payload"});
             var result = caller->respond(outResponse);
