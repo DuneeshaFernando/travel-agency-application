@@ -5,10 +5,10 @@ import ballerina/log;
 http:Client airlineReservationEP = new("http://192.168.1.3:7278");
 
 // // Client endpoint to communicate with Hotel reservation service
-// http:Client hotelReservationEP = new("http://192.168.1.4:6268");
+http:Client hotelReservationEP = new("http://192.168.1.4:6268");
 
 // // Client endpoint to communicate with Car rental service
-// http:Client carRentalEP = new("http://192.168.1.5:5258");
+http:Client carRentalEP = new("http://192.168.1.5:5258");
 
 // Travel agency service to arrange a complete tour for a user
 @http:ServiceConfig {basePath:"/travel"}
@@ -85,53 +85,55 @@ service travelAgencyService on new http:Listener(9298) {
             return;
         }
 
-        //         // Reserve hotel room for the user by calling Hotel reservation service
-        // // construct the payload
-        // map<json> outReqPayloadHotel = outReqPayload.clone();
-        // outReqPayloadHotel["Preference"] = <json>hotelPreference;
+        // Reserve hotel room for the user by calling Hotel reservation service
+        // construct the payload
+        map<json> outReqPayloadHotel = outReqPayload.clone();
+        outReqPayloadHotel["Preference"] = <json>hotelPreference;
 
-        // // Send a post request to hotelReservationService with appropriate payload and get response
-        // http:Response inResHotel = check hotelReservationEP->post("/reserve", <@untainted>outReqPayloadHotel);
+        // Send a post request to hotelReservationService with appropriate payload and get response
+        http:Response inResHotel = check hotelReservationEP->post("/reserve/hotel", <@untainted>outReqPayloadHotel);
 
-        // // Get the reservation status
-        // var hotelResPayload = check <@untainted>inResHotel.getJsonPayload();
-        // string hotelStatus = hotelResPayload.Status.toString();
-        // // If reservation status is negative, send a failure response to user
-        // if (hotelStatus != "Success") {
-        //     outResponse.setJsonPayload({
-        //         "Message": "Failed to reserve hotel! " +
-        //         "Provide a valid 'Preference' for 'Accommodation' and try again"
-        //     });
-        //     var result = caller->respond(outResponse);
-        //     if (result is error) {
-        //         log:printError(result.reason(), err = result);
-        //     }
-        //     return;
-        // }
+        // Get the reservation status
+        var hotelResPayload = check <@untainted>inResHotel.getJsonPayload();
+        string hotelStatus = hotelResPayload.Message.toString();
+        // If reservation status is negative, send a failure response to user
+        if (hotelStatus != "Success") {
+            outResponse.statusCode = 500;
+            outResponse.setJsonPayload({
+                "Message": "Failed to reserve hotel! " +
+                "Provide a valid 'Preference' for 'Accommodation' and try again"
+            });
+            var result = caller->respond(outResponse);
+            if (result is error) {
+                log:printError(result.reason(), err = result);
+            }
+            return;
+        }
 
-        //         // Renting car for the user by calling Car rental service
-        // // construct the payload
-        // map<json> outReqPayloadCar = outReqPayload.clone();
-        // outReqPayloadCar["Preference"] = <json>carPreference;
+        // Renting car for the user by calling Car rental service
+        // construct the payload
+        map<json> outReqPayloadCar = outReqPayload.clone();
+        outReqPayloadCar["Preference"] = <json>carPreference;
 
-        // // Send a post request to carRentalService with appropriate payload and get response
-        // http:Response inResCar = check carRentalEP->post("/rent", <@untainted>outReqPayloadCar);
+        // Send a post request to carRentalService with appropriate payload and get response
+        http:Response inResCar = check carRentalEP->post("/reserve/car", <@untainted>outReqPayloadCar);
 
-        // // Get the rental status
-        // var carResPayload = check <@untainted>inResCar.getJsonPayload();
-        // string carRentalStatus = carResPayload.Status.toString();
-        // // If rental status is negative, send a failure response to user
-        // if (carRentalStatus != "Success") {
-        //     outResponse.setJsonPayload({
-        //         "Message": "Failed to rent car! " +
-        //         "Provide a valid 'Preference' for 'Car' and try again"
-        //     });
-        //     var result = caller->respond(outResponse);
-        //     if (result is error) {
-        //         log:printError(result.reason(), err = result);
-        //     }
-        //     return;
-        // }
+        // Get the rental status
+        var carResPayload = check <@untainted>inResCar.getJsonPayload();
+        string carRentalStatus = carResPayload.Message.toString();
+        // If rental status is negative, send a failure response to user
+        if (carRentalStatus != "Success") {
+            outResponse.statusCode = 500;
+            outResponse.setJsonPayload({
+                "Message": "Failed to rent car! " +
+                "Provide a valid 'Preference' for 'Car' and try again"
+            });
+            var result = caller->respond(outResponse);
+            if (result is error) {
+                log:printError(result.reason(), err = result);
+            }
+            return;
+        }
 
         // If all three services response positive status, send a successful message to the user
         outResponse.setJsonPayload({"Message": "Congratulations! Your journey is ready!!"});
