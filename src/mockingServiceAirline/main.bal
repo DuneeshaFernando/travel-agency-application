@@ -43,8 +43,8 @@ service reserveItems on new http:Listener(7278) {
         http:Response outResponse = new;
         map<json> inReqPayload = {};
 
-        // JSON payload format for an HTTP out request.
-        map<json> outReqPayload = {"FirstName": "", "LastName": "", "Preference": ""};
+        // JSON payload format to be sent for querying.
+        map<json> outReqPayload = {"FirstName": "", "LastName": ""};
         // Try parsing the JSON payload from the user request
         var payload = inRequest.getJsonPayload();
         if (payload is map<json>) {
@@ -61,11 +61,12 @@ service reserveItems on new http:Listener(7278) {
             return;
         }
         
-        outReqPayload["FirstName"] = inReqPayload["Name"];
+        outReqPayload["FirstName"] = inReqPayload["FirstName"];
+        outReqPayload["LastName"] = inReqPayload["LastName"];
         json | error airlinePreference = inReqPayload.Preference;
         
         // If payload parsing fails, send a "Bad Request" message as the response
-        if (outReqPayload.FirstName is () || airlinePreference is error) {
+        if (outReqPayload.FirstName is () || outReqPayload.FirstName is () || airlinePreference is error) {
             outResponse.statusCode = 400;
             outResponse.setJsonPayload({"Message": "Bad Request - Invalid Payload"});
             var result = caller->respond(outResponse);
@@ -76,53 +77,21 @@ service reserveItems on new http:Listener(7278) {
         }
         
         // Reserve airline ticket for the user by calling Airline reservation service
-        // construct the payload
-        map<json> outReqPayloadAirline = outReqPayload.clone();
-        string name = outReqPayload["FirstName"].toString();
-        int|() index = name.indexOf(" ");
-        int last = name.length();
-        if (index is ()) {
-            outReqPayloadAirline["FirstName"] = name.toJsonString();
-            outReqPayloadAirline["LastName"] = " ";
-        } else {
-            outReqPayloadAirline["FirstName"] = name.substring(0, index).toJsonString();
-            outReqPayloadAirline["LastName"] = name.substring(index+1, last).toJsonString();
-        }
-        outReqPayloadAirline["Preference"] = <json>airlinePreference;
-        
         // Get the reservation status
-        http:Response inResAirline = new;
-        map<json> inRqstPayload = {};
-        inRqstPayload = <@untainted>outReqPayloadAirline;
-        int readAck = readOperation(mysqlClient, <@untainted>  inRqstPayload);
+        int readAck = readOperation(mysqlClient, <@untainted>  outReqPayload);
         if (readAck == 1) {
             io:println("Queried from the database successfully!");
-            inResAirline.statusCode = 200;
-            inResAirline.setJsonPayload({"Status": "Success"});
-        } else {
-            io:println("Data querying failed!");
-            inResAirline.statusCode = 500;
-            inResAirline.setJsonPayload({"Status": "Failed"});
-        }
-
-        var airlineResPayload = check <@untainted>inResAirline.getJsonPayload();
-        string airlineStatus = airlineResPayload.Status.toString();
-        // If reservation status is negative, send a failure response to user
-        if (airlineStatus != "Success") {
-            outResponse.statusCode = 500;
-            outResponse.setJsonPayload({
-                "Message": "Failed to reserve airline! " +
-                "Provide a valid 'Preference' for 'Airline' and try again"
-            });
+            outResponse.statusCode = 200;
+            outResponse.setJsonPayload({"Message": "Success"});
             var result = caller->respond(outResponse);
             if (result is error) {
                 log:printError(result.reason(), err = result);
             }
-        }else{
-            outResponse.statusCode = 200;
-            outResponse.setJsonPayload({
-                "Message": "Success"
-            });
+        } else {
+            io:println("Data querying failed!");
+            outResponse.statusCode = 500;
+            outResponse.setJsonPayload({"Message": "Failed to reserve airline! " +
+                "Provide a valid 'Preference' for 'Airline' and try again"});
             var result = caller->respond(outResponse);
             if (result is error) {
                 log:printError(result.reason(), err = result);

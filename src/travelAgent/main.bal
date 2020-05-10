@@ -22,7 +22,7 @@ service travelAgencyService on new http:Listener(9298) {
         map<json> inReqPayload = {};
 
         // JSON payload format for an HTTP out request.
-        map<json> outReqPayload = {"Name": "", "ArrivalDate": "", "DepartureDate": "", "Preference": ""};
+        map<json> outReqPayload = {"FirstName": "", "LastName": "", "ArrivalDate": "", "DepartureDate": "", "Preference": ""};
 
         // Try parsing the JSON payload from the user request
         var payload = inRequest.getJsonPayload();
@@ -40,7 +40,8 @@ service travelAgencyService on new http:Listener(9298) {
             return;
         }
 
-        outReqPayload["Name"] = inReqPayload["Name"];
+        outReqPayload["FirstName"] = inReqPayload["FirstName"];
+        outReqPayload["LastName"] = inReqPayload["LastName"];
         outReqPayload["ArrivalDate"] = inReqPayload["ArrivalDate"];
         outReqPayload["DepartureDate"] = inReqPayload["DepartureDate"];
         json | error airlinePreference = inReqPayload.Preference.Airline;

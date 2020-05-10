@@ -6,7 +6,7 @@ docker network create --subnet=192.168.1.0/24 myNet;
 
 #Populating the databases
 docker run -dit --cpus=1 --net myNet --ip 192.168.1.6 --name=mysqlcontainerairline -e MYSQL_ROOT_PASSWORD=test@123 -d mysql/mysql-server:latest
-sleep 10
+sleep 20
 docker exec -i mysqlcontainerairline mysql -u root -p$password < mySQLcommandsFile.txt
 
 #Starting the service containers
