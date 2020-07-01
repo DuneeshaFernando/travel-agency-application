@@ -13,3 +13,6 @@ path = "mysqlconnectorfolder/mysql-connector-java-8.0.19.jar"
 groupId = "mysql"
 modules= ["mockingServiceAirline","mockingServiceHotel","mockingServiceCar"]
 
+[build-options]
+observability-included=true
+

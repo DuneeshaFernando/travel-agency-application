@@ -16,21 +16,21 @@ docker exec -i mysqlcontainercar mysql -u root -p$password < mySQLcarCommandsFil
 
 #Starting the service containers
 # docker container run --rm -it -v $(pwd):/home/ballerina -u $(id -u):$(id -u) -e JAVA_OPTS="-Duser.home=/home/ballerina" choreoipaas/choreo-ballerina:with-fix-for-perf-issue ballerina build --skip-tests travelAgent
-ballerina build --skip-tests --with-choreo travelAgent
+ballerina build --skip-tests travelAgent
 docker build -t travelobs -f src/travelAgent/docker/Dockerfile ${PWD}
 docker run -dit --cpus=1 --net myNet --ip 192.168.1.2 --name=ta1 -p 9298:9298 travelobs:latest;
 
 # docker container run --rm -it -v $(pwd):/home/ballerina -u $(id -u):$(id -u) -e JAVA_OPTS="-Duser.home=/home/ballerina" choreoipaas/choreo-ballerina:with-fix-for-perf-issue ballerina build --skip-tests mockingServiceAirline
-ballerina build --skip-tests --with-choreo mockingServiceAirline
+ballerina build --skip-tests mockingServiceAirline
 docker build -t airlineobs -f src/mockingServiceAirline/docker/Dockerfile ${PWD}
 docker run -dit --cpus=1 --net myNet --ip 192.168.1.3 --name=mk1 airlineobs:latest;
 
 # docker container run --rm -it -v $(pwd):/home/ballerina -u $(id -u):$(id -u) -e JAVA_OPTS="-Duser.home=/home/ballerina" choreoipaas/choreo-ballerina:with-fix-for-perf-issue ballerina build --skip-tests mockingServiceHotel
-ballerina build --skip-tests --with-choreo mockingServiceHotel
+ballerina build --skip-tests mockingServiceHotel
 docker build -t hotelobs -f src/mockingServiceHotel/docker/Dockerfile ${PWD}
 docker run -dit --cpus=1 --net myNet --ip 192.168.1.4 --name=mk2 hotelobs:latest;
 
 # docker container run --rm -it -v $(pwd):/home/ballerina -u $(id -u):$(id -u) -e JAVA_OPTS="-Duser.home=/home/ballerina" choreoipaas/choreo-ballerina:with-fix-for-perf-issue ballerina build --skip-tests mockingServiceCar
-ballerina build --skip-tests --with-choreo mockingServiceCar
+ballerina build --skip-tests mockingServiceCar
 docker build -t carobs -f src/mockingServiceCar/docker/Dockerfile ${PWD}
 docker run -dit --cpus=1 --net myNet --ip 192.168.1.5 --name=mk3 carobs:latest;
