@@ -41,7 +41,7 @@ service travelAgencyService on new http:Listener(9298) {
             outResponse.setJsonPayload({"Message": "Invalid payload - Not a valid JSON payload"});
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }
             return;
         }
@@ -61,7 +61,7 @@ service travelAgencyService on new http:Listener(9298) {
             outResponse.setJsonPayload({"Message": "Bad Request - Invalid Payload"});
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }            
             return;
         }
@@ -86,7 +86,7 @@ service travelAgencyService on new http:Listener(9298) {
             });
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }
             return;
         }
@@ -111,7 +111,7 @@ service travelAgencyService on new http:Listener(9298) {
             });
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }
             return;
         }
@@ -136,7 +136,7 @@ service travelAgencyService on new http:Listener(9298) {
             });
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }
             return;
         }
@@ -145,7 +145,7 @@ service travelAgencyService on new http:Listener(9298) {
         outResponse.setJsonPayload({"Message": "Congratulations! Your journey is ready!!"});
         var result = caller->respond(outResponse);
         if (result is error) {
-            log:printError(result.reason(), err = result);
+            log:printError(result.message(), err = result);
         }    
     }
 }

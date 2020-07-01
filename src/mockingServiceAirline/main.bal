@@ -58,7 +58,7 @@ service reserveItems on new http:Listener(7278) {
             outResponse.setJsonPayload({"Message": "Invalid payload - Not a valid JSON payload"});
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }
             return;
         }
@@ -73,7 +73,7 @@ service reserveItems on new http:Listener(7278) {
             outResponse.setJsonPayload({"Message": "Bad Request - Invalid Payload"});
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }            
             return;
         }
@@ -87,7 +87,7 @@ service reserveItems on new http:Listener(7278) {
             outResponse.setJsonPayload({"Message": "Success"});
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }
         } else {
             io:println("Data querying failed!");
@@ -96,7 +96,7 @@ service reserveItems on new http:Listener(7278) {
                 "Provide a valid 'Preference' for 'Airline' and try again"});
             var result = caller->respond(outResponse);
             if (result is error) {
-                log:printError(result.reason(), err = result);
+                log:printError(result.message(), err = result);
             }
         }
         return;
